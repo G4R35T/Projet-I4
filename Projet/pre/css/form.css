@@ -1,0 +1,49 @@
+.input{
+
+	width: 75%;
+    height: 3em;
+    margin: 1em auto;
+    border-radius: 3em;
+    border: 5px solid white;
+    background: #F5E592;
+    text-align: center;
+
+}
+
+form{
+
+	display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button{
+
+width: 60%;
+    height: 5em;
+    margin: 1em auto;
+    border-radius: 3em;
+    border: 5px solid white;
+    background: #F5E592;
+    text-align: center;
+    color: grey;
+
+
+}
+
+.button:hover{
+
+cursor: pointer;
+background: #B0A46F;
+border: 3px solid cornflowerblue;
+color: white;
+font: bold;
+}
+
+div .form-box{
+
+	max-width: 30%;
+	height: auto;
+}

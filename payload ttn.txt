@@ -1,0 +1,29 @@
+function decodeUplink(input) {
+  
+  var value="";
+  var id = '';
+  
+  for(var i=0; i<input.bytes.length;i++)
+  {
+    if(input.bytes[i]<10)
+    {
+      value=value+"0";
+    }
+    
+    value=value+input.bytes[i].toString(16);
+  }
+  for (var n = 0; n < value.length; n += 2) {
+        id += String.fromCharCode(parseInt(value.substr(n, 2), 16));
+    }
+  const info = id.split('!');
+  
+  return {
+    data: {
+      casier:info[0],
+      badge:info[1],
+      succes:info[2],
+      cle:info[3],
+      porte:info[4]
+    },
+  };
+}

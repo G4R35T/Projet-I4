@@ -1,0 +1,271 @@
+/*
+  Lora Send And Receive
+  This sketch demonstrates how to send and receive data with the MKR WAN 1300/1310 LoRa module.
+  This example code is in the public domain.
+*/
+#include <SPI.h>
+#include <MFRC522.h>
+#include <MKRWAN.h>
+
+
+#define SS_PIN 11
+#define RST_PIN 7
+    
+#define AccesFlag_PIN 2
+#define Gate_PIN 3
+#define Max_Acces 3
+#define cle_pin 4
+#define door_pin 5
+
+LoRaModem modem;
+
+// Uncomment if using the Murata chip as a module
+// LoRaModem modem(Serial1);
+
+#include "arduino_secrets.h"
+// Please enter your sensitive data in the Secret tab or arduino_secrets.h
+String appEui = "0000000000000001";
+String appKey = "16203303F1F4E818A6BF601AC7E8F386";
+
+byte Count_acces=0; 
+byte CodeVerif=0; 
+byte Code_Acces[4]={0x76, 0x83, 0x3C, 0xF8};
+
+MFRC522 rfid(SS_PIN, RST_PIN); // Instance of the class
+
+// Init array that will store new NUID 
+byte nuidPICC[4];
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  while (!Serial);
+  // change this to your regional band (eg. US915, AS923, ...)
+  if (!modem.begin(EU868)) {
+    Serial.println("Failed to start module");
+    while (1) {}
+  };
+  Serial.print("Your module version is: ");
+  Serial.println(modem.version());
+  Serial.print("Your device EUI is: ");
+  Serial.println(modem.deviceEUI());
+
+  int connected = modem.joinOTAA(appEui, appKey);
+  if (!connected) {
+    Serial.println("Something went wrong; are you indoor? Move near a window and retry");
+    while (1) {}
+  }
+
+  // Set poll interval to 60 secs.
+  modem.minPollInterval(60);
+  // NOTE: independent of this setting, the modem will
+  // not allow sending more than one message every 2 minutes,
+  // this is enforced by firmware and can not be changed.
+
+   // Init SPI bus
+  SPI.begin(); 
+
+  // Init MFRC522 
+  rfid.PCD_Init(); 
+
+  // Init LEDs 
+  pinMode(AccesFlag_PIN, OUTPUT);
+  pinMode(Gate_PIN, OUTPUT);
+  pinMode(cle_pin, OUTPUT);
+  pinMode(door_pin, OUTPUT);
+  
+  digitalWrite(AccesFlag_PIN, LOW);
+  digitalWrite(Gate_PIN, LOW);
+  digitalWrite(cle_pin, HIGH);
+digitalWrite(door_pin, HIGH);
+  
+    Serial.println();
+  Serial.println("Enter a message to send to network");
+  Serial.println("(make sure that end-of-line 'NL' is enabled)");
+  Serial.println("oui");
+
+ 
+}
+
+void loop() {
+  int cle=0;
+  int sensorValue = analogRead(A2);
+  float voltage= sensorValue * (5.0 / 1023.0);
+  if(voltage < 3){
+    cle = 0;
+    }else{
+      cle = 1;
+      }
+
+
+int door=0;
+  int sensorValued = analogRead(A3);
+  float voltaged= sensorValued * (5.0 / 1023.0);
+  if(voltaged < 3){
+    door = 1;
+    }else{
+      door = 0;
+      }
+
+      
+ 
+  String Badge = frfid();// recupere l id du badge si il est correct
+  while (!Serial.available());
+  
+  
+  if(Badge.compareTo("") != 0){
+    
+   
+    String msg = "1!"+Badge+"!"+cle+"!"+door;
+    
+    Serial.println();
+    Serial.print("Sending: " + msg + " - ");
+    
+    for (unsigned int i = 0; i < msg.length(); i++) {
+      
+      Serial.print(msg[i] >> 4, HEX);
+      Serial.print(msg[i] & 0xF, HEX);
+      Serial.print(" ");
+      
+    }
+    
+    Serial.println();
+  
+    int err;
+    modem.beginPacket();
+    modem.print(msg);
+    err = modem.endPacket(true);
+    
+    if (err > 0) {
+      
+      Serial.println("Message sent correctly!");
+      
+    } else {
+      
+      Serial.println("Error sending message :(");
+      
+    }
+    
+    delay(1000);
+    
+    if (!modem.available()) {
+      
+      Serial.println("No downlink message received at this time.");
+      return ;
+      
+    }
+    
+    char rcv[64];
+    int i = 0;
+    
+    while (modem.available()) {
+      rcv[i++] = (char)modem.read();
+    }
+    
+    Serial.print("Received: ");
+
+   
+    for (unsigned int j = 0; j < i; j++) {
+      Serial.print(rcv[j] >> 4, HEX);
+      Serial.print(rcv[j] & 0xF, HEX);
+      Serial.print(" ");
+      
+    }
+    Serial.println();
+  }
+  
+}
+
+
+
+String frfid(){//fonc pour recup id du badge
+  String succes="0";
+  String id;
+  if ( !rfid.PICC_IsNewCardPresent())
+    return "";
+
+  // Vérifier la présence d'un nouveau badge 
+  if ( !rfid.PICC_ReadCardSerial())
+    return "";
+
+  // Afffichage 
+  Serial.println(F("Un badge est détecté"));
+
+  // Enregistrer l’ID du badge (4 octets) 
+  for (byte i = 0; i < 4; i++) {
+    nuidPICC[i] = rfid.uid.uidByte[i];
+  }
+
+  // Vérification du code 
+  CodeVerif= GetAccesState(Code_Acces,nuidPICC); 
+  if (CodeVerif!=1)
+  {
+    id = "E + ";
+    Count_acces+=1;
+    if(Count_acces==Max_Acces)
+    {
+     // Dépassement des tentatives (clignotement infinie) 
+     int i = 0;
+     while(i<5)
+     {
+      digitalWrite(AccesFlag_PIN, HIGH);
+      delay(200); 
+      digitalWrite(AccesFlag_PIN, LOW);
+      delay(200); 
+      // Affichage 
+      Serial.println("Alarme!");
+      i++;
+     }
+     return "";
+    }
+    else
+    {
+      // Affichage 
+      Serial.println("Code érroné");
+      succes = "0";
+      // Un seul clignotement: Code erroné 
+      digitalWrite(AccesFlag_PIN, HIGH);
+      delay(1000); 
+      digitalWrite(AccesFlag_PIN, LOW);
+    }
+  }
+  else
+  {
+    id = "O + ";
+    // Affichage 
+    Serial.println("Ouverture de la porte");
+    succes="1";
+    // Ouverture de la porte & Initialisation 
+    digitalWrite(Gate_PIN, HIGH);
+    delay(3000); 
+    digitalWrite(Gate_PIN, LOW);
+    Count_acces=0; 
+  }
+
+  // Affichage de l'identifiant 
+  Serial.println(" L'UID du tag est:");
+  for (byte i = 0; i < 4; i++) 
+  {
+    Serial.print(nuidPICC[i], HEX);
+    Serial.print(" ");
+  }
+  String bid = String(nuidPICC[0],HEX)+" "+String(nuidPICC[1],HEX) +" "+String(nuidPICC[2],HEX)+" "+String(nuidPICC[3],HEX);
+  Serial.println(bid);
+
+  // Re-Init RFID
+  rfid.PICC_HaltA(); // Halt PICC
+  rfid.PCD_StopCrypto1(); // Stop encryption on PCD
+  id = id + bid;
+  return bid+"!"+succes;
+}
+
+
+byte GetAccesState(byte *CodeAcces,byte *NewCode) 
+{
+  byte StateAcces=0; 
+  if ((CodeAcces[0]==NewCode[0])&&(CodeAcces[1]==NewCode[1])&&
+  (CodeAcces[2]==NewCode[2])&& (CodeAcces[3]==NewCode[3]))
+    return StateAcces=1; 
+  else
+    return StateAcces=0; 
+}

@@ -1,0 +1,105 @@
+div.equipe{
+padding: 0 5% 2em;
+
+}
+
+div.board{
+  display: none;
+}
+
+.rowcont{
+
+  background-color: #F0F0F0;
+  padding: 2% 0 0;
+  max-width: 75%;
+  margin: auto;
+  text-align: center;
+  border-radius: 3em;
+}
+
+
+.columncont {
+  float: left;
+  width: 48%;
+  margin-bottom: 16px;
+  padding: 0 1%;
+}
+
+.cardcont {
+  box-shadow: 0 5px 9px 0 rgba(0, 0, 0, 0.2);
+  margin: 0 auto;
+  padding-bottom: 1.5em;
+  background-color: #CACBCC ;
+  border-radius: 3em;
+}
+
+.about-sectioncont {
+  
+  text-align: center;
+  background-color: #A2B5BF;
+  color: white;
+}
+
+.containercont {
+  padding: 0 16px;
+}
+
+div.containercont p{
+  text-align: center;
+}
+
+.containercont::after, .row::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.titlecont {
+  color: grey;
+  text-align: center;
+}
+
+.buttoncont {
+  font-family: 'Roboto', sans-serif;
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 1em 2em;
+  font-size: 16px;
+  color: #383838;
+  background-color: #F5E592;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  margin:0 auto;
+border-radius: 5em;
+}
+
+.buttoncont:hover {
+  background-color: #B0A46F;
+}
+
+img.tete{
+width: 90%;
+margin: 0 auto;
+  padding : 5%;
+  border-radius: 5em;
+}
+
+@media screen and (max-width: 800px) {
+  .columncont {
+    width: 94%;
+    display: block;
+    padding:0 3%;
+  }
+  #pageEquipe h2.paratxt{
+    font-size: 100%;
+  }
+  .titrepage{
+  background: #F0F0F0 ;
+  }
+  div.board{
+  display: block;
+}
+
+}

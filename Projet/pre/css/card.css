@@ -1,0 +1,292 @@
+.casier {
+  position: relative;
+  width: 10em;
+  height: 15em;
+  border: 10px solid #474747 ;
+  border-radius: 10px;
+  box-sizing: border-box;
+  margin-bottom :2em;
+}
+
+.porte {
+  position: relative;
+  top:-0.1em;
+  left: -0.1em;
+  width: 8em;
+  height: 13em;
+  background-color: #777 ;
+  border-radius: 5px;
+  border: 0.5em solid #777;
+  z-index: 4;
+  transform: perspective(500px) rotateX(0deg);
+  transform-origin: bottom;
+  transition: transform 0.5s;
+}
+
+.porte.ouverte {
+  transform: perspective(500px) rotateX(-110deg);
+}
+
+
+.cle {
+  position: absolute;
+  top: 3em;
+  left: 1em;
+  width: 7em;
+  height: 7em;
+  background-size: cover;
+  z-index: 3;
+  transform: rotate(45deg);
+  display: none;
+  transition: width 0.3s;
+}
+
+
+.card-box{
+  font-family: 'Roboto', sans-serif;
+  padding: 2em;
+  height: 24em;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+}
+
+
+.card{
+ 
+background:lightgrey;
+height:24em;
+border-left : 5px solid #F5E592;
+border-top : 5px solid #F5E592;
+box-shadow: 10px 10px 10px grey;
+border-radius: 1em;
+position: relative;
+z-index: 1;
+vertical-align: bottom;
+padding: 0 2em;
+display: inline-flex;
+flex-direction: column;
+align-items: center;
+}
+
+
+.card-title{
+    display: inline-flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: row;
+    margin: auto;
+}
+
+
+.card h1{
+
+
+}
+
+.card-ham{
+
+    background: #484e7d;
+    width: 2em;
+    height: 2em;
+    margin-left: 1em;
+    border: 0.2em solid white;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.card-ham-bar{
+
+  width: 84%;
+  background: white;
+  height: 13%;
+  border-radius: 10px;
+  margin: 15% 9.5%;
+
+}
+
+.card-ham:hover{
+background: #243195;
+
+
+}
+
+.card-ham:hover .h{
+
+    width: 60%;
+    position: relative;
+    top: 0.25em;
+    left: 0.5em;
+    transform: rotate(-145deg);
+    transition:transform  0.3s;
+}
+
+.card-ham:hover .b{
+
+    transform: rotate(145deg);
+    width: 60%;
+    position: relative;
+    left: 0.5em;
+    top: -0.25em;
+    transition:transform 0.3s;
+}
+
+
+.card-ham.ouvert .h{
+  transform: rotate(45deg);
+  position: relative;
+  top: 0.55em;
+  
+}
+
+.card-ham.ouvert .m{
+  display: none;
+
+  
+}
+
+.card-ham.ouvert .b{
+  transform: rotate(-45deg);
+
+  
+}
+
+.card-ham.ouvert:hover .h{
+
+  width: 65%;
+  position: relative;
+  top: 0.55em;
+  left: 0.25em;
+  transform: rotate(405deg);  
+    
+}
+
+.card-ham.ouvert:hover .b{
+
+  width: 65%;
+  position: relative;
+  left: 0.25em;
+  top: auto;
+  transform: rotate(315deg);  
+}
+
+.card-ext{
+
+
+background:lightgrey;
+border-left : 5px solid #F5E592;
+border-top : 5px solid #F5E592;
+box-shadow: 10px 10px 10px grey;
+border-radius: 1em;
+height:24em;
+display: none;
+
+}
+
+.card-ext.ouvert {
+  display: inherit;
+
+  
+}
+
+.card ul{
+
+margin: 2em auto 0em;
+display: inline-flex;
+flex-direction: column;
+flex-wrap: nowrap;
+justify-content: space-evenly;
+align-items: flex-start;
+}
+
+
+
+.card li{
+
+
+padding-right: 1em;
+}
+
+.card-ext-ptitre{
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    margin-bottom: auto;
+}
+
+.card-ext-titre{
+    margin-right: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+
+.card-ext-petit-rond{
+
+    background: black;
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 1em;
+    margin-right: 1em;
+    margin-left: 1em;
+}
+.card-ext-etat{
+
+    text-align: center;
+    background: #A8A1F4;
+    min-width: 50%;
+    width: auto;
+    border: 0.3em solid #F5E592;
+    border-radius: 2em;
+    padding-inline: 0.5em;
+
+}
+
+.card-ext-titre h3{
+
+  margin-right: 1em;
+  margin-bottom: 0.5em;
+
+}
+
+.card-ext-etat.fermee{
+
+background:#777;
+
+}
+
+.card-ext-etat.ouverte{
+background:#e4e4e4;
+
+
+}
+
+.card-ext-etat.presente{
+background:#69d344;
+
+
+}
+
+.card-ext-etat.absente{
+
+background:#ff5d5d;
+
+}
+
+@media screen and (max-width: 800px) {
+.card-box{
+flex-wrap: nowrap;
+}
+
+#refresh-button{
+
+max-width: inherit;
+}
+}

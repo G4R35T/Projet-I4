@@ -1,0 +1,66 @@
+.offset:hover, .offset:focus {
+     box-shadow: 0 0 0 0 var(--hover), inset 13em 3.5em 0 0 var(--hover);
+}
+ .offset {
+     --color: #383838;
+     --hover: #B0A46F;
+}
+ button.offset {
+     color: var(--color);
+     transition: 0.5s;
+     cursor: pointer;
+     border-radius: 5em;
+}
+ button.offset:hover, button.offset:focus {
+     border-color: var(--hover);
+     color: #383838;
+}
+
+ button.offset {
+     background: none;
+     border: 2px solid;
+     line-height: 1;
+     margin: 0.5em;
+     padding: 1em 2em;
+     cursor: pointer;
+}
+
+footer
+{
+    font-family: 'Roboto', sans-serif;
+    margin: 0 auto;
+  padding: 0em;
+  text-align: center;
+    background: #F5E592;
+}
+
+footer h2
+{
+  font-family: 'Roboto', sans-serif;
+    margin: 0 auto;
+    padding: 1em;
+  text-align: center;
+    color: #383838;
+}
+
+footer div.spacer
+{
+height: 1em;
+overflow: hidden;
+}
+
+
+
+footer span
+{
+  color: #AAA;
+}
+
+footer div.marque
+{
+  font-family: 'Roboto', sans-serif;
+    margin: 0 auto;
+    padding: 1em;
+  text-align: center;
+    color: #383838;
+}

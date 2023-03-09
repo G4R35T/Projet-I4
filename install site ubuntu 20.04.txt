@@ -1,0 +1,9 @@
+https://web.hpcrafter.uk/Videos/Website/commands.pdf
+
+https://linuxhint.com/installing_php_myadmin_ubuntu/
+
+instalation npm 
+intallation node red
+
++ ouvrir port 1880
+

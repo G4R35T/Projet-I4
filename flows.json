@@ -1,0 +1,503 @@
+[
+    {
+        "id": "32a10b0a7056775e",
+        "type": "tab",
+        "label": "principale",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "2068881ec8d42220",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "eu1.cloud.thethings.network",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "a547ad5d2b52a12b",
+        "type": "MySQLdatabase",
+        "name": "Projet",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "Projet",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "c9ef3711bfd71ce0",
+        "type": "debug",
+        "z": "32a10b0a7056775e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 450,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "b4af341b9e4151f2",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "MySQL logs",
+        "func": "\n\n\nvar succes = msg.payload.uplink_message.decoded_payload.succes\nvar casier = msg.payload.uplink_message.decoded_payload.casier\nvar badge = msg.payload.uplink_message.decoded_payload.badge\nmsg.topic = \"INSERT INTO logs(`badgeid`,`casierid`,`succes`) VALUES ('\" + badge + \"' , '\" + casier + \"', '\" + succes + \"')\";\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 200,
+        "wires": [
+            [
+                "e0e30adbb7d0a7eb"
+            ]
+        ]
+    },
+    {
+        "id": "aea2957d5186e16a",
+        "type": "mqtt in",
+        "z": "32a10b0a7056775e",
+        "name": "",
+        "topic": "#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "2068881ec8d42220",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "b4af341b9e4151f2",
+                "c9ef3711bfd71ce0",
+                "b7f422edd87badf5"
+            ]
+        ]
+    },
+    {
+        "id": "e0e30adbb7d0a7eb",
+        "type": "mysql",
+        "z": "32a10b0a7056775e",
+        "mydb": "a547ad5d2b52a12b",
+        "name": "",
+        "x": 870,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "78d8c701505dab06",
+        "type": "join",
+        "z": "32a10b0a7056775e",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": true,
+        "timeout": "",
+        "count": "",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 730,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "462b67d3b5106b3f",
+        "type": "inject",
+        "z": "32a10b0a7056775e",
+        "name": "test payload",
+        "props": [
+            {
+                "p": "payload.uplink_message.decoded_payload.badge",
+                "v": "76 83 3c f8",
+                "vt": "str"
+            },
+            {
+                "p": "payload.uplink_message.decoded_payload.casier",
+                "v": "0",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 720,
+        "wires": [
+            [
+                "a2df82c80b439ac1"
+            ]
+        ]
+    },
+    {
+        "id": "5ac70e2e4830f87b",
+        "type": "mqtt out",
+        "z": "32a10b0a7056775e",
+        "name": "ouverture",
+        "topic": "v3/projet-iot-i4-test@ttn/devices/eui-a8610a32373e7c08/down/push",
+        "qos": "1",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "2068881ec8d42220",
+        "x": 800,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "a2df82c80b439ac1",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "MySQL Function",
+        "func": "//temperature.payload = temperature.payload.uplink_message.decoded_payload.TempC_SHT\n//msg.topic = \"INSERT INTO data1 ( `dev_value_1`) VALUES ( \" + temperature + \");\";\n\n//return msg;\n\n\n\nvar casier = msg.payload.uplink_message.decoded_payload.casier;\nvar badge = msg.payload.uplink_message.decoded_payload.badge;\nmsg.topic = \"SELECT * FROM badge WHERE badgecode =( '\" + badge + \"') AND opencasier= ('\" + casier + \"')\";\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 720,
+        "wires": [
+            [
+                "bbe59396c887e9af"
+            ]
+        ]
+    },
+    {
+        "id": "bbe59396c887e9af",
+        "type": "mysql",
+        "z": "32a10b0a7056775e",
+        "mydb": "a547ad5d2b52a12b",
+        "name": "",
+        "x": 530,
+        "y": 720,
+        "wires": [
+            [
+                "79e03dc1521759c6"
+            ]
+        ]
+    },
+    {
+        "id": "79e03dc1521759c6",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "function 1",
+        "func": "\nvar status = msg.payload.array[1];\nif(!status.equals(\"\")){\nreturn 1;}\nelse {\n    return 0;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 720,
+        "wires": [
+            [
+                "8303ac69133f200d"
+            ]
+        ]
+    },
+    {
+        "id": "8303ac69133f200d",
+        "type": "debug",
+        "z": "32a10b0a7056775e",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 820,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "ca9fbd7d8073b744",
+        "type": "inject",
+        "z": "32a10b0a7056775e",
+        "name": "test payload",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[0,42,255,0]",
+        "payloadType": "str",
+        "x": 370,
+        "y": 900,
+        "wires": [
+            [
+                "8dc98430e11263a4"
+            ]
+        ]
+    },
+    {
+        "id": "8dc98430e11263a4",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "function 2",
+        "func": "return{\n \"payload\":{\n     \"downlinks\":[{\n         \"f_port\": 1,\n         \"frm_payload\":msg.payload.toString(\"base64\"),\n         \"priority\" : \"NORMAL\"\n     }]\n\n }\n\n}\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 900,
+        "wires": [
+            [
+                "5ac70e2e4830f87b",
+                "cd43e84a4666461a"
+            ]
+        ]
+    },
+    {
+        "id": "cd43e84a4666461a",
+        "type": "debug",
+        "z": "32a10b0a7056775e",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "fb2f8f1a21da9f8e",
+        "type": "inject",
+        "z": "32a10b0a7056775e",
+        "name": "test payload",
+        "props": [
+            {
+                "p": "payload.uplink_message.decoded_payload.badge",
+                "v": "76 83 3c f8",
+                "vt": "str"
+            },
+            {
+                "p": "payload.uplink_message.decoded_payload.casier",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "p": "payload.uplink_message.decoded_payload.cle",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "p": "payload.uplink_message.decoded_payload.porte",
+                "v": "0",
+                "vt": "str"
+            },
+            {
+                "p": "payload.uplink_message.decoded_payload.succes",
+                "v": "1",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 150,
+        "y": 420,
+        "wires": [
+            [
+                "52e11ac7f33c1d19",
+                "d8c9608e8cf2d3e2",
+                "1b3c45627f24a2eb"
+            ]
+        ]
+    },
+    {
+        "id": "e28d9c7462c4c31d",
+        "type": "comment",
+        "z": "32a10b0a7056775e",
+        "name": "Downlink",
+        "info": "",
+        "x": 140,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "f6533bf55b07f5ba",
+        "type": "comment",
+        "z": "32a10b0a7056775e",
+        "name": "uplink",
+        "info": "",
+        "x": 150,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "d8c9608e8cf2d3e2",
+        "type": "debug",
+        "z": "32a10b0a7056775e",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 410,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "52e11ac7f33c1d19",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "MySQL logs",
+        "func": "\n\n\nvar succes = msg.payload.uplink_message.decoded_payload.succes\nvar casier = msg.payload.uplink_message.decoded_payload.casier\nvar badge = msg.payload.uplink_message.decoded_payload.badge\nmsg.topic = \"INSERT INTO logs(`badgeid`,`casierid`,`succes`) VALUES ('\" + badge + \"' , '\" + casier + \"', '\" + succes + \"')\";\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 440,
+        "wires": [
+            [
+                "0de1943ac494d27c"
+            ]
+        ]
+    },
+    {
+        "id": "0de1943ac494d27c",
+        "type": "mysql",
+        "z": "32a10b0a7056775e",
+        "mydb": "a547ad5d2b52a12b",
+        "name": "",
+        "x": 690,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1b3c45627f24a2eb",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "MySQL update",
+        "func": "var casier = msg.payload.uplink_message.decoded_payload.casier\nvar cle = msg.payload.uplink_message.decoded_payload.cle\nvar porte = msg.payload.uplink_message.decoded_payload.porte\nmsg.topic = \"UPDATE casier SET cle=('\"+ cle +\"'), porte = '\"+ porte +\"' WHERE casierid = '\"+casier+\"';\";\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 480,
+        "wires": [
+            [
+                "c256acf8be5682f1"
+            ]
+        ]
+    },
+    {
+        "id": "c256acf8be5682f1",
+        "type": "mysql",
+        "z": "32a10b0a7056775e",
+        "mydb": "a547ad5d2b52a12b",
+        "name": "",
+        "x": 590,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b7f422edd87badf5",
+        "type": "function",
+        "z": "32a10b0a7056775e",
+        "name": "MySQL update",
+        "func": "var casier = msg.payload.uplink_message.decoded_payload.casier\nvar cle = msg.payload.uplink_message.decoded_payload.cle\nvar porte = msg.payload.uplink_message.decoded_payload.porte\nmsg.topic = \"UPDATE casier SET cle=('\"+ cle +\"'), porte = '\"+ porte +\"' WHERE casierid = '\"+casier+\"';\";\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 240,
+        "wires": [
+            [
+                "da7374b40d9ddf90"
+            ]
+        ]
+    },
+    {
+        "id": "da7374b40d9ddf90",
+        "type": "mysql",
+        "z": "32a10b0a7056775e",
+        "mydb": "a547ad5d2b52a12b",
+        "name": "",
+        "x": 630,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    }
+]
